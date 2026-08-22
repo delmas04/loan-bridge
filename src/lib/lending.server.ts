@@ -188,13 +188,13 @@ export interface SubmitInput {
   purpose: string;
   monthlyIncome: number;
   employmentStatus: string;
-  employerName?: string | null;
+  employerName?: string | null | undefined;
   monthlyExpenses: number;
   existingDebt: number;
-  otherObligations?: string | null;
+  otherObligations?: string | null | undefined;
   acceptTerms: boolean;
-  ip?: string | null;
-  userAgent?: string | null;
+  ip?: string | null | undefined;
+  userAgent?: string | null | undefined;
 }
 
 /**
@@ -389,7 +389,7 @@ export async function loadMyLending(supabase: UserClient, userId: string) {
 
 export interface DepositInput {
   guaranteeId: string;
-  providerId?: string | null;
+  providerId?: string | null | undefined;
   method: string;
 }
 
@@ -482,7 +482,7 @@ export async function initiateGuaranteeDeposit(supabase: UserClient, userId: str
 export async function acceptContract(
   supabase: UserClient,
   userId: string,
-  input: { contractId: string; ip?: string | null; userAgent?: string | null },
+  input: { contractId: string; ip?: string | null | undefined; userAgent?: string | null },
 ) {
   const { data: contract } = await supabase
     .from("contracts")

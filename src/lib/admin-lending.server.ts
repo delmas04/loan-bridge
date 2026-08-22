@@ -26,7 +26,7 @@ async function assertAdmin(supabase: UserClient, userId: string) {
 export interface ProductInput {
   id?: string | null | undefined;
   name: string;
-  description?: string | null;
+  description?: string | null | undefined;
   country_id: string;
   currency_code: string;
   min_amount: number;
@@ -243,9 +243,9 @@ export async function loadApplicationDetail(supabase: UserClient, userId: string
 export interface DecisionInput {
   applicationId: string;
   decision: "approve" | "reject" | "request_information";
-  approvedAmount?: number | null;
-  notes?: string | null;
-  reason?: string | null;
+  approvedAmount?: number | null | undefined;
+  notes?: string | null | undefined;
+  reason?: string | null | undefined;
 }
 
 export async function decideApplication(supabase: UserClient, userId: string, input: DecisionInput) {
@@ -456,7 +456,7 @@ export async function decideApplication(supabase: UserClient, userId: string, in
 export async function confirmGuaranteeDeposit(
   supabase: UserClient,
   userId: string,
-  input: { paymentId: string; providerReference: string; amount?: number | null },
+  input: { paymentId: string; providerReference: string; amount?: number | null | undefined },
 ) {
   await assertStaff(supabase as never, userId);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -850,7 +850,7 @@ export async function recordRepayment(
 export async function releaseGuarantee(
   supabase: UserClient,
   userId: string,
-  input: { guaranteeId: string; action: "start_release" | "confirm_release"; providerReference?: string | null },
+  input: { guaranteeId: string; action: "start_release" | "confirm_release"; providerReference?: string | null | undefined },
 ) {
   await assertStaff(supabase as never, userId);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
