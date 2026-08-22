@@ -56,6 +56,78 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          account_holder_name: string
+          account_number: string | null
+          bank_address: string | null
+          bank_name: string
+          bic_swift: string | null
+          country_id: string | null
+          created_at: string
+          currency_code: string
+          display_order: number
+          iban: string | null
+          id: string
+          is_active: boolean
+          label: string | null
+          payment_instructions: string
+          payment_method: string
+          updated_at: string
+        }
+        Insert: {
+          account_holder_name: string
+          account_number?: string | null
+          bank_address?: string | null
+          bank_name: string
+          bic_swift?: string | null
+          country_id?: string | null
+          created_at?: string
+          currency_code: string
+          display_order?: number
+          iban?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          payment_instructions?: string
+          payment_method?: string
+          updated_at?: string
+        }
+        Update: {
+          account_holder_name?: string
+          account_number?: string | null
+          bank_address?: string | null
+          bank_name?: string
+          bic_swift?: string | null
+          country_id?: string | null
+          created_at?: string
+          currency_code?: string
+          display_order?: number
+          iban?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string | null
+          payment_instructions?: string
+          payment_method?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_accounts_currency_code_fkey"
+            columns: ["currency_code"]
+            isOneToOne: false
+            referencedRelation: "currencies"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           accepted_at: string | null
@@ -399,14 +471,17 @@ export type Database = {
         Row: {
           amount: number
           application_id: string | null
+          completed_at: string | null
           created_at: string
           currency_code: string
+          destination_bank: Json
           guarantee_id: string
           id: string
           loan_id: string | null
           new_status: Database["public"]["Enums"]["guarantee_status"] | null
           notes: string | null
           payment_id: string | null
+          payment_reference: string | null
           performed_by: string | null
           previous_status:
             | Database["public"]["Enums"]["guarantee_status"]
@@ -421,14 +496,17 @@ export type Database = {
         Insert: {
           amount: number
           application_id?: string | null
+          completed_at?: string | null
           created_at?: string
           currency_code: string
+          destination_bank?: Json
           guarantee_id: string
           id?: string
           loan_id?: string | null
           new_status?: Database["public"]["Enums"]["guarantee_status"] | null
           notes?: string | null
           payment_id?: string | null
+          payment_reference?: string | null
           performed_by?: string | null
           previous_status?:
             | Database["public"]["Enums"]["guarantee_status"]
@@ -443,14 +521,17 @@ export type Database = {
         Update: {
           amount?: number
           application_id?: string | null
+          completed_at?: string | null
           created_at?: string
           currency_code?: string
+          destination_bank?: Json
           guarantee_id?: string
           id?: string
           loan_id?: string | null
           new_status?: Database["public"]["Enums"]["guarantee_status"] | null
           notes?: string | null
           payment_id?: string | null
+          payment_reference?: string | null
           performed_by?: string | null
           previous_status?:
             | Database["public"]["Enums"]["guarantee_status"]
@@ -513,6 +594,7 @@ export type Database = {
           claimed_amount: number
           created_at: string
           currency_code: string
+          guarantee_number: number
           id: string
           loan_id: string | null
           locked_at: string | null
@@ -532,6 +614,7 @@ export type Database = {
           claimed_amount?: number
           created_at?: string
           currency_code: string
+          guarantee_number?: number
           id?: string
           loan_id?: string | null
           locked_at?: string | null
@@ -551,6 +634,7 @@ export type Database = {
           claimed_amount?: number
           created_at?: string
           currency_code?: string
+          guarantee_number?: number
           id?: string
           loan_id?: string | null
           locked_at?: string | null
@@ -1079,6 +1163,7 @@ export type Database = {
           id: string
           installment_amount: number
           installment_count: number
+          loan_number: number
           missed_installments: number
           outstanding_balance: number
           outstanding_principal: number
@@ -1108,6 +1193,7 @@ export type Database = {
           id?: string
           installment_amount: number
           installment_count: number
+          loan_number?: number
           missed_installments?: number
           outstanding_balance: number
           outstanding_principal: number
@@ -1137,6 +1223,7 @@ export type Database = {
           id?: string
           installment_amount?: number
           installment_count?: number
+          loan_number?: number
           missed_installments?: number
           outstanding_balance?: number
           outstanding_principal?: number
@@ -1257,68 +1344,122 @@ export type Database = {
         Row: {
           amount: number
           application_id: string | null
+          bank_account_id: string | null
+          bank_transaction_reference: string | null
           confirmed_at: string | null
           created_at: string
           currency_code: string
+          declared_amount: number | null
+          declared_at: string | null
+          declared_currency: string | null
           direction: string
           failure_reason: string | null
+          guarantee_id: string | null
           id: string
           initiated_at: string
           installment_id: string | null
           loan_id: string | null
           metadata: Json
+          mismatch_flags: string[]
           payment_method: string | null
+          payment_reference: string | null
+          proof_file_path: string | null
           provider_id: string | null
           provider_reference: string | null
           purpose: string
+          rejection_reason: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          sender_bank_name: string | null
+          sender_name: string | null
           status: Database["public"]["Enums"]["payment_status"]
           transaction_reference: string
+          transfer_date: string | null
           updated_at: string
           user_id: string
+          verified_at: string | null
+          verified_by: string | null
         }
         Insert: {
           amount: number
           application_id?: string | null
+          bank_account_id?: string | null
+          bank_transaction_reference?: string | null
           confirmed_at?: string | null
           created_at?: string
           currency_code: string
+          declared_amount?: number | null
+          declared_at?: string | null
+          declared_currency?: string | null
           direction?: string
           failure_reason?: string | null
+          guarantee_id?: string | null
           id?: string
           initiated_at?: string
           installment_id?: string | null
           loan_id?: string | null
           metadata?: Json
+          mismatch_flags?: string[]
           payment_method?: string | null
+          payment_reference?: string | null
+          proof_file_path?: string | null
           provider_id?: string | null
           provider_reference?: string | null
           purpose?: string
+          rejection_reason?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_bank_name?: string | null
+          sender_name?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           transaction_reference?: string
+          transfer_date?: string | null
           updated_at?: string
           user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Update: {
           amount?: number
           application_id?: string | null
+          bank_account_id?: string | null
+          bank_transaction_reference?: string | null
           confirmed_at?: string | null
           created_at?: string
           currency_code?: string
+          declared_amount?: number | null
+          declared_at?: string | null
+          declared_currency?: string | null
           direction?: string
           failure_reason?: string | null
+          guarantee_id?: string | null
           id?: string
           initiated_at?: string
           installment_id?: string | null
           loan_id?: string | null
           metadata?: Json
+          mismatch_flags?: string[]
           payment_method?: string | null
+          payment_reference?: string | null
+          proof_file_path?: string | null
           provider_id?: string | null
           provider_reference?: string | null
           purpose?: string
+          rejection_reason?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          sender_bank_name?: string | null
+          sender_name?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           transaction_reference?: string
+          transfer_date?: string | null
           updated_at?: string
           user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Relationships: [
           {
@@ -1329,11 +1470,25 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "payments_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payments_currency_code_fkey"
             columns: ["currency_code"]
             isOneToOne: false
             referencedRelation: "currencies"
             referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "payments_guarantee_id_fkey"
+            columns: ["guarantee_id"]
+            isOneToOne: false
+            referencedRelation: "guarantees"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "payments_installment_id_fkey"
@@ -1694,6 +1849,8 @@ export type Database = {
         | "eligible_for_release"
         | "release_pending"
         | "released"
+        | "eligible_for_refund"
+        | "refund_pending"
       installment_status:
         | "upcoming"
         | "due"
@@ -1724,6 +1881,9 @@ export type Database = {
         | "failed"
         | "refunded"
         | "cancelled"
+        | "declared"
+        | "under_review"
+        | "verified"
       repayment_frequency: "weekly" | "biweekly" | "monthly"
       risk_status: "normal" | "warning" | "late" | "serious_delay" | "default"
       ticket_status:
@@ -1918,6 +2078,8 @@ export const Constants = {
         "eligible_for_release",
         "release_pending",
         "released",
+        "eligible_for_refund",
+        "refund_pending",
       ],
       installment_status: [
         "upcoming",
@@ -1952,6 +2114,9 @@ export const Constants = {
         "failed",
         "refunded",
         "cancelled",
+        "declared",
+        "under_review",
+        "verified",
       ],
       repayment_frequency: ["weekly", "biweekly", "monthly"],
       risk_status: ["normal", "warning", "late", "serious_delay", "default"],
