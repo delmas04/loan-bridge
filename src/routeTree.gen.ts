@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
+import { Route as AuthenticatedLoansRouteImport } from './routes/_authenticated/loans'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminKycRouteImport } from './routes/_authenticated/admin/kyc'
@@ -43,6 +44,11 @@ const AuthenticatedDocumentsRoute = AuthenticatedDocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLoansRoute = AuthenticatedLoansRouteImport.update({
+  id: '/loans',
+  path: '/loans',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
+  '/loans': typeof AuthenticatedLoansRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
+  '/loans': typeof AuthenticatedLoansRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
+  '/_authenticated/loans': typeof AuthenticatedLoansRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/admin/kyc': typeof AuthenticatedAdminKycRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/documents'
+    | '/loans'
     | '/profile'
     | '/admin/kyc'
     | '/admin/'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/documents'
+    | '/loans'
     | '/profile'
     | '/admin/kyc'
     | '/admin'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
+    | '/_authenticated/loans'
     | '/_authenticated/profile'
     | '/_authenticated/admin/kyc'
     | '/_authenticated/admin/'
@@ -174,6 +186,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/loans': {
+      id: '/_authenticated/loans'
+      path: '/loans'
+      fullPath: '/loans'
+      preLoaderRoute: typeof AuthenticatedLoansRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -208,6 +227,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
+  AuthenticatedLoansRoute: typeof AuthenticatedLoansRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedAdminKycRoute: typeof AuthenticatedAdminKycRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -217,6 +237,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
+  AuthenticatedLoansRoute: AuthenticatedLoansRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedAdminKycRoute: AuthenticatedAdminKycRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
