@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as AuthenticatedAdminKycRouteImport } from './routes/_authenticated/admin/kyc'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin/products'
+import { Route as AuthenticatedAdminApplicationsApplicationIdRouteImport } from './routes/_authenticated/admin/applications.$applicationId'
 import { Route as AuthenticatedAdminCustomersUserIdRouteImport } from './routes/_authenticated/admin/customers.$userId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -109,6 +110,12 @@ const AuthenticatedAdminProductsRoute =
     path: '/admin/products',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminApplicationsApplicationIdRoute =
+  AuthenticatedAdminApplicationsApplicationIdRouteImport.update({
+    id: '/$applicationId',
+    path: '/$applicationId',
+    getParentRoute: () => AuthenticatedAdminApplicationsRoute,
+  } as any)
 const AuthenticatedAdminCustomersUserIdRoute =
   AuthenticatedAdminCustomersUserIdRouteImport.update({
     id: '/admin/customers/$userId',
@@ -128,10 +135,11 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/repayments': typeof AuthenticatedRepaymentsRoute
   '/support': typeof AuthenticatedSupportRoute
-  '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/admin/applications': typeof AuthenticatedAdminApplicationsRouteWithChildren
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/applications/$applicationId': typeof AuthenticatedAdminApplicationsApplicationIdRoute
   '/admin/customers/$userId': typeof AuthenticatedAdminCustomersUserIdRoute
 }
 export interface FileRoutesByTo {
@@ -146,10 +154,11 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/repayments': typeof AuthenticatedRepaymentsRoute
   '/support': typeof AuthenticatedSupportRoute
-  '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/admin/applications': typeof AuthenticatedAdminApplicationsRouteWithChildren
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/applications/$applicationId': typeof AuthenticatedAdminApplicationsApplicationIdRoute
   '/admin/customers/$userId': typeof AuthenticatedAdminCustomersUserIdRoute
 }
 export interface FileRoutesById {
@@ -166,10 +175,11 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/repayments': typeof AuthenticatedRepaymentsRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
-  '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRouteWithChildren
   '/_authenticated/admin/kyc': typeof AuthenticatedAdminKycRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/applications/$applicationId': typeof AuthenticatedAdminApplicationsApplicationIdRoute
   '/_authenticated/admin/customers/$userId': typeof AuthenticatedAdminCustomersUserIdRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/admin/kyc'
     | '/admin/products'
     | '/admin/'
+    | '/admin/applications/$applicationId'
     | '/admin/customers/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/admin/kyc'
     | '/admin/products'
     | '/admin'
+    | '/admin/applications/$applicationId'
     | '/admin/customers/$userId'
   id:
     | '__root__'
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/kyc'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/applications/$applicationId'
     | '/_authenticated/admin/customers/$userId'
   fileRoutesById: FileRoutesById
 }
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/applications/$applicationId': {
+      id: '/_authenticated/admin/applications/$applicationId'
+      path: '/$applicationId'
+      fullPath: '/admin/applications/$applicationId'
+      preLoaderRoute: typeof AuthenticatedAdminApplicationsApplicationIdRouteImport
+      parentRoute: typeof AuthenticatedAdminApplicationsRoute
+    }
     '/_authenticated/admin/customers/$userId': {
       id: '/_authenticated/admin/customers/$userId'
       path: '/admin/customers/$userId'
@@ -359,6 +379,21 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedAdminApplicationsRouteChildren {
+  AuthenticatedAdminApplicationsApplicationIdRoute: typeof AuthenticatedAdminApplicationsApplicationIdRoute
+}
+
+const AuthenticatedAdminApplicationsRouteChildren: AuthenticatedAdminApplicationsRouteChildren =
+  {
+    AuthenticatedAdminApplicationsApplicationIdRoute:
+      AuthenticatedAdminApplicationsApplicationIdRoute,
+  }
+
+const AuthenticatedAdminApplicationsRouteWithChildren =
+  AuthenticatedAdminApplicationsRoute._addFileChildren(
+    AuthenticatedAdminApplicationsRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApplyRoute: typeof AuthenticatedApplyRoute
@@ -370,7 +405,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRepaymentsRoute: typeof AuthenticatedRepaymentsRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
-  AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
+  AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRouteWithChildren
   AuthenticatedAdminKycRoute: typeof AuthenticatedAdminKycRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -387,7 +422,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRepaymentsRoute: AuthenticatedRepaymentsRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
-  AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
+  AuthenticatedAdminApplicationsRoute:
+    AuthenticatedAdminApplicationsRouteWithChildren,
   AuthenticatedAdminKycRoute: AuthenticatedAdminKycRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
