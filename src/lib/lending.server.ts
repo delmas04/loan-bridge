@@ -149,18 +149,18 @@ export async function createQuote(supabase: UserClient, userId: string, input: Q
       product_id: product.id,
       country_id: product.country_id,
       currency_code: product.currency_code,
-      amount: quote.amount,
+      amount: Number(quote.amount),
       duration_months: duration,
       repayment_frequency: input.frequency,
       annual_interest_rate: quote.annualInterestRate,
       periodic_interest_rate: quote.periodicInterestRate,
       installment_count: quote.installmentCount,
-      installment_amount: quote.installmentAmount,
-      final_installment_amount: quote.finalInstallmentAmount,
-      total_interest: quote.totalInterest,
-      total_repayable: quote.totalRepayable,
+      installment_amount: Number(quote.installmentAmount),
+      final_installment_amount: Number(quote.finalInstallmentAmount),
+      total_interest: Number(quote.totalInterest),
+      total_repayable: Number(quote.totalRepayable),
       guarantee_percentage: quote.guaranteePercentage,
-      guarantee_amount: quote.guaranteeAmount,
+      guarantee_amount: Number(quote.guaranteeAmount),
       first_due_date: quote.firstDueDate,
       final_due_date: quote.finalDueDate,
       processing_time: product.processing_time,
@@ -188,13 +188,13 @@ export interface SubmitInput {
   purpose: string;
   monthlyIncome: number;
   employmentStatus: string;
-  employerName?: string | null;
+  employerName?: string | null | undefined;
   monthlyExpenses: number;
   existingDebt: number;
-  otherObligations?: string | null;
+  otherObligations?: string | null | undefined;
   acceptTerms: boolean;
-  ip?: string | null;
-  userAgent?: string | null;
+  ip?: string | null | undefined;
+  userAgent?: string | null | undefined;
 }
 
 /**
@@ -389,7 +389,7 @@ export async function loadMyLending(supabase: UserClient, userId: string) {
 
 export interface DepositInput {
   guaranteeId: string;
-  providerId?: string | null;
+  providerId?: string | null | undefined;
   method: string;
 }
 
@@ -427,7 +427,7 @@ export async function initiateGuaranteeDeposit(supabase: UserClient, userId: str
       purpose: "guarantee_deposit",
       direction: "inbound",
       payment_method: input.method,
-      amount: outstanding.toFixed(2),
+      amount: Number(outstanding.toFixed(2)),
       currency_code: guarantee.currency_code,
       status: "pending",
       metadata: { guarantee_id: guarantee.id } as never,
@@ -444,7 +444,7 @@ export async function initiateGuaranteeDeposit(supabase: UserClient, userId: str
     payment_id: payment.id,
     provider_id: input.providerId ?? null,
     transaction_type: "deposit",
-    amount: outstanding.toFixed(2),
+    amount: Number(outstanding.toFixed(2)),
     currency_code: guarantee.currency_code,
     previous_status: guarantee.status,
     new_status: "payment_pending",
@@ -476,4 +476,70 @@ export async function initiateGuaranteeDeposit(supabase: UserClient, userId: str
   });
 
   return { paymentReference: ref, amount: outstanding.toFixed(2), currency: guarantee.currency_code };
+}
+
+/** Customer accepts the loan contract, moving the application to disbursement. */
+export async function acceptContract(
+  supabase: UserClient,
+  userId: string,
+  input: { contractId: string; ip?: string | null | undefined; userAgent?: string | null },
+) {
+  const { data: contract } = await supabase
+    .from("contracts")
+    .select("*")
+    .eq("id", input.contractId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!contract) throw new Error("Contract not found.");
+  if (contract.status === "accepted") return { ok: true };
+  if (contract.status !== "pending_acceptance") throw new Error("This contract cannot be accepted.");
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const now = new Date().toISOString();
+
+  await supabaseAdmin
+    .from("contracts")
+    .update({
+      status: "accepted",
+      accepted_at: now,
+      accepted_ip: input.ip ?? null,
+      accepted_user_agent: input.userAgent ?? null,
+    })
+    .eq("id", contract.id);
+
+  await supabaseAdmin
+    .from("loan_applications")
+    .update({ status: "ready_for_disbursement" })
+    .eq("id", contract.application_id);
+
+  await writeAudit({
+    actorId: userId,
+    actorRole: "customer",
+    action: "contract.accepted",
+    entityType: "contract",
+    entityId: contract.id,
+    after: { version: contract.version },
+    ip: input.ip ?? null,
+    userAgent: input.userAgent ?? null,
+  });
+
+  await notify({
+    userId,
+    category: "loan_ready_for_disbursement",
+    title: "Contract accepted",
+    body: "Your loan contract is signed and your loan is queued for disbursement.",
+    link: "/loans",
+  });
+
+  return { ok: true };
+}
+
+/** Contracts awaiting the customer's signature. */
+export async function loadMyContracts(supabase: UserClient, userId: string) {
+  const { data } = await supabase
+    .from("contracts")
+    .select("id, application_id, loan_id, version, status, accepted_at, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return data ?? [];
 }
