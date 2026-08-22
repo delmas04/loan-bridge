@@ -5,10 +5,10 @@ type Tone = "neutral" | "positive" | "warning" | "critical" | "info";
 
 const TONES: Record<Tone, string> = {
   neutral: "bg-secondary text-secondary-foreground",
-  positive: "bg-[var(--success-muted)] text-[var(--success)]",
-  warning: "bg-[var(--warning-muted)] text-[var(--warning)]",
+  positive: "bg-success/10 text-success",
+  warning: "bg-warning/15 text-warning",
   critical: "bg-destructive/10 text-destructive",
-  info: "bg-accent/10 text-accent",
+  info: "bg-primary/10 text-primary",
 };
 
 const MAP: Record<string, Tone> = {
