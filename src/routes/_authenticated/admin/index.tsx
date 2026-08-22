@@ -23,23 +23,40 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 function AdminOverview() {
   const { data: session } = useOverview();
   const fetchOverview = useServerFn(getAdminOverview);
+  const navigate = useNavigate();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { data, error, isLoading } = useQuery({
     queryKey: ["admin-overview"],
     queryFn: () => fetchOverview(),
   });
 
+  async function adminSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    await router.invalidate();
+    navigate({ to: "/admin/login", replace: true });
+  }
+
   return (
     <AppShell isStaff={isStaffRoles(session?.roles)} email={session?.profile?.email}>
       <div className="space-y-8">
-        <div>
-          <h1 className="font-serif text-2xl font-semibold tracking-tight">Admin overview</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Aggregate figures across every market. Amounts are summed per record currency and shown unconverted.
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="font-serif text-2xl font-semibold tracking-tight">Admin overview</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Aggregate figures across every market. Amounts are summed per record currency and shown unconverted.
+            </p>
+          </div>
+          <Button variant="outline" onClick={adminSignOut}>
+            Sign out of admin
+          </Button>
         </div>
 
         {isLoading ? <p className="text-sm text-muted-foreground">Loading metrics…</p> : null}
         {error ? <p className="text-sm text-destructive">{(error as Error).message}</p> : null}
+
 
         {data ? (
           <>

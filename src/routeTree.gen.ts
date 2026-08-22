@@ -22,6 +22,7 @@ import { Route as AuthenticatedMyDocumentsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRepaymentsRouteImport } from './routes/_authenticated/repayments'
 import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as AuthenticatedAdminGuaranteesRouteImport } from './routes/_authenticated/admin/guarantees'
@@ -95,6 +96,11 @@ const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
   path: '/support',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/repayments': typeof AuthenticatedRepaymentsRoute
   '/support': typeof AuthenticatedSupportRoute
+  '/admin/login': typeof AdminLoginRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRouteWithChildren
   '/admin/guarantees': typeof AuthenticatedAdminGuaranteesRoute
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/repayments': typeof AuthenticatedRepaymentsRoute
   '/support': typeof AuthenticatedSupportRoute
+  '/admin/login': typeof AdminLoginRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRouteWithChildren
   '/admin/guarantees': typeof AuthenticatedAdminGuaranteesRoute
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/repayments': typeof AuthenticatedRepaymentsRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
+  '/admin/login': typeof AdminLoginRoute
   '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRouteWithChildren
   '/_authenticated/admin/guarantees': typeof AuthenticatedAdminGuaranteesRoute
   '/_authenticated/admin/kyc': typeof AuthenticatedAdminKycRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/repayments'
     | '/support'
+    | '/admin/login'
     | '/admin/applications'
     | '/admin/guarantees'
     | '/admin/kyc'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/repayments'
     | '/support'
+    | '/admin/login'
     | '/admin/applications'
     | '/admin/guarantees'
     | '/admin/kyc'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/repayments'
     | '/_authenticated/support'
+    | '/admin/login'
     | '/_authenticated/admin/applications'
     | '/_authenticated/admin/guarantees'
     | '/_authenticated/admin/kyc'
@@ -270,6 +282,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AdminLoginRoute: typeof AdminLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/support'
       preLoaderRoute: typeof AuthenticatedSupportRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
