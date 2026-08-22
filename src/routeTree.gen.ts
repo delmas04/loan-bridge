@@ -16,6 +16,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
 import { Route as AuthenticatedGuaranteeRouteImport } from './routes/_authenticated/guarantee'
 import { Route as AuthenticatedLoansRouteImport } from './routes/_authenticated/loans'
+import { Route as AuthenticatedMyDocumentsRouteImport } from './routes/_authenticated/my-documents'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRepaymentsRouteImport } from './routes/_authenticated/repayments'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
@@ -56,6 +57,12 @@ const AuthenticatedLoansRoute = AuthenticatedLoansRouteImport.update({
   path: '/loans',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMyDocumentsRoute =
+  AuthenticatedMyDocumentsRouteImport.update({
+    id: '/my-documents',
+    path: '/my-documents',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -90,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/guarantee': typeof AuthenticatedGuaranteeRoute
   '/loans': typeof AuthenticatedLoansRoute
+  '/my-documents': typeof AuthenticatedMyDocumentsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/repayments': typeof AuthenticatedRepaymentsRoute
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
@@ -103,6 +111,7 @@ export interface FileRoutesByTo {
   '/documents': typeof AuthenticatedDocumentsRoute
   '/guarantee': typeof AuthenticatedGuaranteeRoute
   '/loans': typeof AuthenticatedLoansRoute
+  '/my-documents': typeof AuthenticatedMyDocumentsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/repayments': typeof AuthenticatedRepaymentsRoute
   '/admin/kyc': typeof AuthenticatedAdminKycRoute
@@ -118,6 +127,7 @@ export interface FileRoutesById {
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
   '/_authenticated/guarantee': typeof AuthenticatedGuaranteeRoute
   '/_authenticated/loans': typeof AuthenticatedLoansRoute
+  '/_authenticated/my-documents': typeof AuthenticatedMyDocumentsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/repayments': typeof AuthenticatedRepaymentsRoute
   '/_authenticated/admin/kyc': typeof AuthenticatedAdminKycRoute
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/guarantee'
     | '/loans'
+    | '/my-documents'
     | '/profile'
     | '/repayments'
     | '/admin/kyc'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/guarantee'
     | '/loans'
+    | '/my-documents'
     | '/profile'
     | '/repayments'
     | '/admin/kyc'
@@ -160,6 +172,7 @@ export interface FileRouteTypes {
     | '/_authenticated/documents'
     | '/_authenticated/guarantee'
     | '/_authenticated/loans'
+    | '/_authenticated/my-documents'
     | '/_authenticated/profile'
     | '/_authenticated/repayments'
     | '/_authenticated/admin/kyc'
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLoansRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/my-documents': {
+      id: '/_authenticated/my-documents'
+      path: '/my-documents'
+      fullPath: '/my-documents'
+      preLoaderRoute: typeof AuthenticatedMyDocumentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -267,6 +287,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
   AuthenticatedGuaranteeRoute: typeof AuthenticatedGuaranteeRoute
   AuthenticatedLoansRoute: typeof AuthenticatedLoansRoute
+  AuthenticatedMyDocumentsRoute: typeof AuthenticatedMyDocumentsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRepaymentsRoute: typeof AuthenticatedRepaymentsRoute
   AuthenticatedAdminKycRoute: typeof AuthenticatedAdminKycRoute
@@ -279,6 +300,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
   AuthenticatedGuaranteeRoute: AuthenticatedGuaranteeRoute,
   AuthenticatedLoansRoute: AuthenticatedLoansRoute,
+  AuthenticatedMyDocumentsRoute: AuthenticatedMyDocumentsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRepaymentsRoute: AuthenticatedRepaymentsRoute,
   AuthenticatedAdminKycRoute: AuthenticatedAdminKycRoute,
