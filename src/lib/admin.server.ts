@@ -2,16 +2,6 @@ import { assertStaff, notify, writeAudit } from "./audit.server";
 import type { UserClient } from "./customer.server";
 import { computeCreditScore } from "./loan-math";
 
-async function countOf(
-  supabase: UserClient,
-  table: "profiles" | "loan_applications" | "loans" | "documents" | "kyc_verifications",
-  build: (q: never) => never,
-): Promise<number> {
-  const query = supabase.from(table).select("id", { count: "exact", head: true });
-  const { count } = await (build as unknown as (q: typeof query) => typeof query)(query);
-  return count ?? 0;
-}
-
 export async function loadAdminOverview(supabase: UserClient, actorId: string) {
   await assertStaff(supabase, actorId);
 
