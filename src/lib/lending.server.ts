@@ -477,3 +477,69 @@ export async function initiateGuaranteeDeposit(supabase: UserClient, userId: str
 
   return { paymentReference: ref, amount: outstanding.toFixed(2), currency: guarantee.currency_code };
 }
+
+/** Customer accepts the loan contract, moving the application to disbursement. */
+export async function acceptContract(
+  supabase: UserClient,
+  userId: string,
+  input: { contractId: string; ip?: string | null; userAgent?: string | null },
+) {
+  const { data: contract } = await supabase
+    .from("contracts")
+    .select("*")
+    .eq("id", input.contractId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!contract) throw new Error("Contract not found.");
+  if (contract.status === "accepted") return { ok: true };
+  if (contract.status !== "pending_acceptance") throw new Error("This contract cannot be accepted.");
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const now = new Date().toISOString();
+
+  await supabaseAdmin
+    .from("contracts")
+    .update({
+      status: "accepted",
+      accepted_at: now,
+      accepted_ip: input.ip ?? null,
+      accepted_user_agent: input.userAgent ?? null,
+    })
+    .eq("id", contract.id);
+
+  await supabaseAdmin
+    .from("loan_applications")
+    .update({ status: "ready_for_disbursement" })
+    .eq("id", contract.application_id);
+
+  await writeAudit({
+    actorId: userId,
+    actorRole: "customer",
+    action: "contract.accepted",
+    entityType: "contract",
+    entityId: contract.id,
+    after: { version: contract.version },
+    ip: input.ip ?? null,
+    userAgent: input.userAgent ?? null,
+  });
+
+  await notify({
+    userId,
+    category: "loan_ready_for_disbursement",
+    title: "Contract accepted",
+    body: "Your loan contract is signed and your loan is queued for disbursement.",
+    link: "/loans",
+  });
+
+  return { ok: true };
+}
+
+/** Contracts awaiting the customer's signature. */
+export async function loadMyContracts(supabase: UserClient, userId: string) {
+  const { data } = await supabase
+    .from("contracts")
+    .select("id, application_id, loan_id, version, status, accepted_at, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}

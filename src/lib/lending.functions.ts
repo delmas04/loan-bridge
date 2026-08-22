@@ -72,3 +72,20 @@ export const startGuaranteeDeposit = createServerFn({ method: "POST" })
     const { initiateGuaranteeDeposit } = await import("./lending.server");
     return initiateGuaranteeDeposit(context.supabase, context.userId, data);
   });
+
+export const acceptLoanContract = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ contractId: uuid }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { acceptContract } = await import("./lending.server");
+    const ip = getRequestHeader("cf-connecting-ip") ?? getRequestHeader("x-forwarded-for") ?? null;
+    const userAgent = getRequestHeader("user-agent") ?? null;
+    return acceptContract(context.supabase, context.userId, { contractId: data.contractId, ip, userAgent });
+  });
+
+export const getMyContracts = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { loadMyContracts } = await import("./lending.server");
+    return loadMyContracts(context.supabase, context.userId);
+  });
