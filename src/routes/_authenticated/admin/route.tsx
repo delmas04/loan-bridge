@@ -6,10 +6,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
     try {
       const access = await getMyAdminAccess();
-      if (!access.isAdmin) throw redirect({ to: "/admin/login", search: { denied: true } });
+      if (!access.isAdmin) throw redirect({ to: "/admin/login" });
     } catch (error) {
       if (error && typeof error === "object" && "isRedirect" in error) throw error;
-      throw redirect({ to: "/admin/login", search: { denied: true } });
+      throw redirect({ to: "/admin/login" });
     }
   },
   component: () => <Outlet />,

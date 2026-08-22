@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { z } from "zod";
+import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getMyAdminAccess } from "@/lib/admin-auth.functions";
@@ -8,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const searchSchema = z.object({ denied: z.boolean().optional() });
-
 export const Route = createFileRoute("/admin/login")({
-  validateSearch: searchSchema,
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Administrator sign in — Credia" },
@@ -32,14 +29,9 @@ export const Route = createFileRoute("/admin/login")({
 });
 
 function AdminLogin() {
-  const { denied } = Route.useSearch();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
-
-  useEffect(() => {
-    if (denied) toast.error("This account does not have administrator access.");
-  }, [denied]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
