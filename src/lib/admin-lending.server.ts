@@ -24,7 +24,7 @@ async function assertAdmin(supabase: UserClient, userId: string) {
 }
 
 export interface ProductInput {
-  id?: string | null;
+  id?: string | null | undefined;
   name: string;
   description?: string | null;
   country_id: string;
@@ -320,7 +320,7 @@ export async function decideApplication(supabase: UserClient, userId: string, in
         user_id: guarantee.user_id,
         application_id: application.id,
         transaction_type: "adjustment",
-        amount: received.toFixed(2),
+        amount: Number(received.toFixed(2)),
         currency_code: guarantee.currency_code,
         previous_status: guarantee.status,
         new_status: nextStatus,
@@ -375,13 +375,13 @@ export async function decideApplication(supabase: UserClient, userId: string, in
     .from("loan_applications")
     .update({
       status: "guarantee_required",
-      approved_amount: quote.amount,
+      approved_amount: Number(quote.amount),
       approved_duration_months: application.duration_months,
-      installment_amount: quote.installmentAmount,
+      installment_amount: Number(quote.installmentAmount),
       installment_count: quote.installmentCount,
-      total_interest: quote.totalInterest,
-      total_repayable: quote.totalRepayable,
-      guarantee_amount: quote.guaranteeAmount,
+      total_interest: Number(quote.totalInterest),
+      total_repayable: Number(quote.totalRepayable),
+      guarantee_amount: Number(quote.guaranteeAmount),
       status_reason: null,
       decision_at: now,
       assigned_to: userId,
@@ -393,7 +393,7 @@ export async function decideApplication(supabase: UserClient, userId: string, in
     application_id: application.id,
     user_id: application.user_id,
     decision: "approved",
-    decided_amount: quote.amount,
+    decided_amount: Number(quote.amount),
     decided_duration_months: application.duration_months,
     reasons: ["Underwriting approved"],
     notes: input.notes ?? null,
@@ -408,7 +408,7 @@ export async function decideApplication(supabase: UserClient, userId: string, in
   if (guarantee) {
     await supabaseAdmin
       .from("guarantees")
-      .update({ required_amount: quote.guaranteeAmount, percentage: quote.guaranteePercentage })
+      .update({ required_amount: Number(quote.guaranteeAmount), percentage: quote.guaranteePercentage })
       .eq("id", guarantee.id);
   } else {
     await supabaseAdmin.from("guarantees").insert({
@@ -416,7 +416,7 @@ export async function decideApplication(supabase: UserClient, userId: string, in
       user_id: application.user_id,
       currency_code: application.currency_code,
       percentage: quote.guaranteePercentage,
-      required_amount: quote.guaranteeAmount,
+      required_amount: Number(quote.guaranteeAmount),
       status: "required",
     });
   }
@@ -503,7 +503,7 @@ export async function confirmGuaranteeDeposit(
   await supabaseAdmin
     .from("guarantees")
     .update({
-      received_amount: received.toFixed(2),
+      received_amount: Number(received.toFixed(2)),
       status: nextStatus,
       received_at: fullyFunded ? now : guarantee.received_at,
       locked_at: nextStatus === "locked" ? now : guarantee.locked_at,
@@ -623,16 +623,16 @@ export async function disburseLoan(supabase: UserClient, userId: string, applica
       user_id: application.user_id,
       product_id: application.product_id,
       currency_code: application.currency_code,
-      principal_amount: quote.amount,
+      principal_amount: Number(quote.amount),
       annual_interest_rate: quote.annualInterestRate,
       duration_months: quote.durationMonths,
       repayment_frequency: quote.frequency,
-      installment_amount: quote.installmentAmount,
+      installment_amount: Number(quote.installmentAmount),
       installment_count: quote.installmentCount,
-      total_interest: quote.totalInterest,
-      total_repayable: quote.totalRepayable,
-      outstanding_principal: quote.amount,
-      outstanding_balance: quote.totalRepayable,
+      total_interest: Number(quote.totalInterest),
+      total_repayable: Number(quote.totalRepayable),
+      outstanding_principal: Number(quote.amount),
+      outstanding_balance: Number(quote.totalRepayable),
       first_due_date: quote.firstDueDate,
       final_due_date: quote.finalDueDate,
       disbursed_at: now,
@@ -647,10 +647,10 @@ export async function disburseLoan(supabase: UserClient, userId: string, applica
     user_id: application.user_id,
     installment_number: row.installment_number,
     due_date: row.due_date,
-    total_payment: row.total_payment,
-    principal_portion: row.principal_portion,
-    interest_portion: row.interest_portion,
-    remaining_principal: row.remaining_principal,
+    total_payment: Number(row.total_payment),
+    principal_portion: Number(row.principal_portion),
+    interest_portion: Number(row.interest_portion),
+    remaining_principal: Number(row.remaining_principal),
     status: "upcoming" as const,
   }));
   const { error: schedErr } = await supabaseAdmin.from("loan_installments").insert(rows);
@@ -670,7 +670,7 @@ export async function disburseLoan(supabase: UserClient, userId: string, applica
     application_id: application.id,
     purpose: "disbursement",
     direction: "outbound",
-    amount: quote.amount,
+    amount: Number(quote.amount),
     currency_code: application.currency_code,
     status: "pending",
     metadata: { note: "Awaiting provider settlement confirmation" } as never,
@@ -735,7 +735,7 @@ export async function recordRepayment(
     purpose: "repayment",
     direction: "inbound",
     payment_method: input.method,
-    amount: amount.toFixed(2),
+    amount: Number(amount.toFixed(2)),
     currency_code: loan.currency_code,
     status: "successful",
     provider_reference: input.providerReference,
@@ -745,7 +745,7 @@ export async function recordRepayment(
   await supabaseAdmin
     .from("loan_installments")
     .update({
-      amount_paid: paid.toFixed(2),
+      amount_paid: Number(paid.toFixed(2)),
       status: settled ? "paid" : "partially_paid",
       paid_at: settled ? now : installment.paid_at,
     })
@@ -769,9 +769,9 @@ export async function recordRepayment(
   await supabaseAdmin
     .from("loans")
     .update({
-      amount_paid: amountPaid.toFixed(2),
-      outstanding_principal: outstandingPrincipal.toFixed(2),
-      outstanding_balance: outstandingBalance.toFixed(2),
+      amount_paid: Number(amountPaid.toFixed(2)),
+      outstanding_principal: Number(outstandingPrincipal.toFixed(2)),
+      outstanding_balance: Number(outstandingBalance.toFixed(2)),
       status: completed ? "completed" : loan.status,
       completed_at: completed ? now : loan.completed_at,
       risk_status: completed ? "normal" : loan.risk_status,
@@ -805,7 +805,7 @@ export async function recordRepayment(
         application_id: guarantee.application_id,
         loan_id: loan.id,
         transaction_type: "adjustment",
-        amount: guarantee.received_amount,
+        amount: Number(guarantee.received_amount),
         currency_code: guarantee.currency_code,
         previous_status: "locked",
         new_status: "eligible_for_release",
@@ -875,7 +875,7 @@ export async function releaseGuarantee(
       application_id: guarantee.application_id,
       loan_id: guarantee.loan_id,
       transaction_type: "release",
-      amount: guarantee.received_amount,
+      amount: Number(guarantee.received_amount),
       currency_code: guarantee.currency_code,
       previous_status: guarantee.status,
       new_status: "release_pending",
@@ -890,7 +890,7 @@ export async function releaseGuarantee(
       application_id: guarantee.application_id,
       purpose: "guarantee_release",
       direction: "outbound",
-      amount: guarantee.received_amount,
+      amount: Number(guarantee.received_amount),
       currency_code: guarantee.currency_code,
       status: "processing",
       metadata: { guarantee_id: guarantee.id } as never,
@@ -915,7 +915,7 @@ export async function releaseGuarantee(
 
   await supabaseAdmin
     .from("guarantees")
-    .update({ status: "released", refunded_amount: refunded.toFixed(2), released_at: now })
+    .update({ status: "released", refunded_amount: refunded, released_at: now })
     .eq("id", guarantee.id);
   await supabaseAdmin.from("guarantee_transactions").insert({
     guarantee_id: guarantee.id,
@@ -923,7 +923,7 @@ export async function releaseGuarantee(
     application_id: guarantee.application_id,
     loan_id: guarantee.loan_id,
     transaction_type: "release",
-    amount: amount.toFixed(2),
+    amount: Number(amount.toFixed(2)),
     currency_code: guarantee.currency_code,
     previous_status: "release_pending",
     new_status: "released",
