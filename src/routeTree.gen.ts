@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedApplyRouteImport } from './routes/_authenticated/apply'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents'
@@ -42,6 +43,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedApplyRoute = AuthenticatedApplyRouteImport.update({
   id: '/apply',
@@ -90,32 +96,32 @@ const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedAdminApplicationsRoute =
   AuthenticatedAdminApplicationsRouteImport.update({
-    id: '/admin/applications',
-    path: '/admin/applications',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminGuaranteesRoute =
   AuthenticatedAdminGuaranteesRouteImport.update({
-    id: '/admin/guarantees',
-    path: '/admin/guarantees',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/guarantees',
+    path: '/guarantees',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminKycRoute = AuthenticatedAdminKycRouteImport.update({
-  id: '/admin/kyc',
-  path: '/admin/kyc',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedAdminProductsRoute =
   AuthenticatedAdminProductsRouteImport.update({
-    id: '/admin/products',
-    path: '/admin/products',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminApplicationsApplicationIdRoute =
   AuthenticatedAdminApplicationsApplicationIdRouteImport.update({
@@ -125,14 +131,15 @@ const AuthenticatedAdminApplicationsApplicationIdRoute =
   } as any)
 const AuthenticatedAdminCustomersUserIdRoute =
   AuthenticatedAdminCustomersUserIdRouteImport.update({
-    id: '/admin/customers/$userId',
-    path: '/admin/customers/$userId',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/customers/$userId',
+    path: '/customers/$userId',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/apply': typeof AuthenticatedApplyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/documents': typeof AuthenticatedDocumentsRoute
@@ -175,6 +182,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/apply': typeof AuthenticatedApplyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/documents': typeof AuthenticatedDocumentsRoute
@@ -197,6 +205,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/admin'
     | '/apply'
     | '/dashboard'
     | '/documents'
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/admin'
     | '/_authenticated/apply'
     | '/_authenticated/dashboard'
     | '/_authenticated/documents'
@@ -284,6 +294,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/apply': {
       id: '/_authenticated/apply'
@@ -350,38 +367,38 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
-      path: '/admin'
+      path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/applications': {
       id: '/_authenticated/admin/applications'
-      path: '/admin/applications'
+      path: '/applications'
       fullPath: '/admin/applications'
       preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/guarantees': {
       id: '/_authenticated/admin/guarantees'
-      path: '/admin/guarantees'
+      path: '/guarantees'
       fullPath: '/admin/guarantees'
       preLoaderRoute: typeof AuthenticatedAdminGuaranteesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/kyc': {
       id: '/_authenticated/admin/kyc'
-      path: '/admin/kyc'
+      path: '/kyc'
       fullPath: '/admin/kyc'
       preLoaderRoute: typeof AuthenticatedAdminKycRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/products': {
       id: '/_authenticated/admin/products'
-      path: '/admin/products'
+      path: '/products'
       fullPath: '/admin/products'
       preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/applications/$applicationId': {
       id: '/_authenticated/admin/applications/$applicationId'
@@ -392,10 +409,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/customers/$userId': {
       id: '/_authenticated/admin/customers/$userId'
-      path: '/admin/customers/$userId'
+      path: '/customers/$userId'
       fullPath: '/admin/customers/$userId'
       preLoaderRoute: typeof AuthenticatedAdminCustomersUserIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
   }
 }
@@ -415,7 +432,34 @@ const AuthenticatedAdminApplicationsRouteWithChildren =
     AuthenticatedAdminApplicationsRouteChildren,
   )
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRouteWithChildren
+  AuthenticatedAdminGuaranteesRoute: typeof AuthenticatedAdminGuaranteesRoute
+  AuthenticatedAdminKycRoute: typeof AuthenticatedAdminKycRoute
+  AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminCustomersUserIdRoute: typeof AuthenticatedAdminCustomersUserIdRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminApplicationsRoute:
+      AuthenticatedAdminApplicationsRouteWithChildren,
+    AuthenticatedAdminGuaranteesRoute: AuthenticatedAdminGuaranteesRoute,
+    AuthenticatedAdminKycRoute: AuthenticatedAdminKycRoute,
+    AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+    AuthenticatedAdminCustomersUserIdRoute:
+      AuthenticatedAdminCustomersUserIdRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedApplyRoute: typeof AuthenticatedApplyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDocumentsRoute: typeof AuthenticatedDocumentsRoute
@@ -425,15 +469,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRepaymentsRoute: typeof AuthenticatedRepaymentsRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
-  AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRouteWithChildren
-  AuthenticatedAdminGuaranteesRoute: typeof AuthenticatedAdminGuaranteesRoute
-  AuthenticatedAdminKycRoute: typeof AuthenticatedAdminKycRoute
-  AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
-  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-  AuthenticatedAdminCustomersUserIdRoute: typeof AuthenticatedAdminCustomersUserIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedApplyRoute: AuthenticatedApplyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDocumentsRoute: AuthenticatedDocumentsRoute,
@@ -443,14 +482,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRepaymentsRoute: AuthenticatedRepaymentsRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
-  AuthenticatedAdminApplicationsRoute:
-    AuthenticatedAdminApplicationsRouteWithChildren,
-  AuthenticatedAdminGuaranteesRoute: AuthenticatedAdminGuaranteesRoute,
-  AuthenticatedAdminKycRoute: AuthenticatedAdminKycRoute,
-  AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
-  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-  AuthenticatedAdminCustomersUserIdRoute:
-    AuthenticatedAdminCustomersUserIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
