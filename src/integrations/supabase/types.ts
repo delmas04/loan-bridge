@@ -398,10 +398,12 @@ export type Database = {
       guarantee_transactions: {
         Row: {
           amount: number
+          application_id: string | null
           created_at: string
           currency_code: string
           guarantee_id: string
           id: string
+          loan_id: string | null
           new_status: Database["public"]["Enums"]["guarantee_status"] | null
           notes: string | null
           payment_id: string | null
@@ -409,15 +411,21 @@ export type Database = {
           previous_status:
             | Database["public"]["Enums"]["guarantee_status"]
             | null
+          provider_id: string | null
+          provider_reference: string | null
+          status: Database["public"]["Enums"]["payment_status"]
           transaction_type: string
+          updated_at: string
           user_id: string
         }
         Insert: {
           amount: number
+          application_id?: string | null
           created_at?: string
           currency_code: string
           guarantee_id: string
           id?: string
+          loan_id?: string | null
           new_status?: Database["public"]["Enums"]["guarantee_status"] | null
           notes?: string | null
           payment_id?: string | null
@@ -425,15 +433,21 @@ export type Database = {
           previous_status?:
             | Database["public"]["Enums"]["guarantee_status"]
             | null
+          provider_id?: string | null
+          provider_reference?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
           transaction_type: string
+          updated_at?: string
           user_id: string
         }
         Update: {
           amount?: number
+          application_id?: string | null
           created_at?: string
           currency_code?: string
           guarantee_id?: string
           id?: string
+          loan_id?: string | null
           new_status?: Database["public"]["Enums"]["guarantee_status"] | null
           notes?: string | null
           payment_id?: string | null
@@ -441,10 +455,21 @@ export type Database = {
           previous_status?:
             | Database["public"]["Enums"]["guarantee_status"]
             | null
+          provider_id?: string | null
+          provider_reference?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
           transaction_type?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "guarantee_transactions_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "loan_applications"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "guarantee_transactions_currency_code_fkey"
             columns: ["currency_code"]
@@ -460,10 +485,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "guarantee_transactions_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "guarantee_transactions_payment_id_fkey"
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guarantee_transactions_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "payment_providers"
             referencedColumns: ["id"]
           },
         ]
@@ -606,17 +645,21 @@ export type Database = {
           currency_code: string
           decision_at: string | null
           declared_monthly_debt: number | null
+          declared_monthly_expenses: number | null
           declared_monthly_income: number | null
           disbursed_at: string | null
           duration_months: number
+          employer_name: string | null
           employment_status: string | null
           guarantee_amount: number | null
           guarantee_percentage: number | null
           id: string
           installment_amount: number | null
           installment_count: number | null
+          other_obligations: string | null
           product_id: string
           purpose: string | null
+          quote_id: string | null
           reference: string
           repayment_frequency: Database["public"]["Enums"]["repayment_frequency"]
           requested_amount: number
@@ -641,17 +684,21 @@ export type Database = {
           currency_code: string
           decision_at?: string | null
           declared_monthly_debt?: number | null
+          declared_monthly_expenses?: number | null
           declared_monthly_income?: number | null
           disbursed_at?: string | null
           duration_months: number
+          employer_name?: string | null
           employment_status?: string | null
           guarantee_amount?: number | null
           guarantee_percentage?: number | null
           id?: string
           installment_amount?: number | null
           installment_count?: number | null
+          other_obligations?: string | null
           product_id: string
           purpose?: string | null
+          quote_id?: string | null
           reference?: string
           repayment_frequency?: Database["public"]["Enums"]["repayment_frequency"]
           requested_amount: number
@@ -676,17 +723,21 @@ export type Database = {
           currency_code?: string
           decision_at?: string | null
           declared_monthly_debt?: number | null
+          declared_monthly_expenses?: number | null
           declared_monthly_income?: number | null
           disbursed_at?: string | null
           duration_months?: number
+          employer_name?: string | null
           employment_status?: string | null
           guarantee_amount?: number | null
           guarantee_percentage?: number | null
           id?: string
           installment_amount?: number | null
           installment_count?: number | null
+          other_obligations?: string | null
           product_id?: string
           purpose?: string | null
+          quote_id?: string | null
           reference?: string
           repayment_frequency?: Database["public"]["Enums"]["repayment_frequency"]
           requested_amount?: number
@@ -721,6 +772,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "loan_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_applications_quote_fk"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "loan_quotes"
             referencedColumns: ["id"]
           },
         ]
@@ -794,7 +852,9 @@ export type Database = {
           country_id: string
           created_at: string
           currency_code: string
+          description: string | null
           early_repayment_rules: Json
+          eligibility_requirements: string[]
           eligibility_rules: Json
           guarantee_percentage: number
           id: string
@@ -806,6 +866,7 @@ export type Database = {
           min_duration_months: number
           name: string
           origination_fee_rate: number
+          processing_time: string
           required_documents: string[]
           updated_at: string
         }
@@ -815,7 +876,9 @@ export type Database = {
           country_id: string
           created_at?: string
           currency_code: string
+          description?: string | null
           early_repayment_rules?: Json
+          eligibility_requirements?: string[]
           eligibility_rules?: Json
           guarantee_percentage?: number
           id?: string
@@ -827,6 +890,7 @@ export type Database = {
           min_duration_months: number
           name: string
           origination_fee_rate?: number
+          processing_time?: string
           required_documents?: string[]
           updated_at?: string
         }
@@ -836,7 +900,9 @@ export type Database = {
           country_id?: string
           created_at?: string
           currency_code?: string
+          description?: string | null
           early_repayment_rules?: Json
+          eligibility_requirements?: string[]
           eligibility_rules?: Json
           guarantee_percentage?: number
           id?: string
@@ -848,6 +914,7 @@ export type Database = {
           min_duration_months?: number
           name?: string
           origination_fee_rate?: number
+          processing_time?: string
           required_documents?: string[]
           updated_at?: string
         }
@@ -865,6 +932,134 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "currencies"
             referencedColumns: ["code"]
+          },
+        ]
+      }
+      loan_quotes: {
+        Row: {
+          accepted_at: string | null
+          accepted_ip: string | null
+          accepted_user_agent: string | null
+          amount: number
+          annual_interest_rate: number
+          application_id: string | null
+          country_id: string
+          created_at: string
+          currency_code: string
+          duration_months: number
+          expires_at: string
+          final_due_date: string
+          final_installment_amount: number
+          first_due_date: string
+          guarantee_amount: number
+          guarantee_percentage: number
+          id: string
+          installment_amount: number
+          installment_count: number
+          periodic_interest_rate: number
+          processing_time: string | null
+          product_id: string
+          quote_version: string
+          repayment_frequency: Database["public"]["Enums"]["repayment_frequency"]
+          schedule: Json
+          terms_version: string
+          total_interest: number
+          total_repayable: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_ip?: string | null
+          accepted_user_agent?: string | null
+          amount: number
+          annual_interest_rate: number
+          application_id?: string | null
+          country_id: string
+          created_at?: string
+          currency_code: string
+          duration_months: number
+          expires_at?: string
+          final_due_date: string
+          final_installment_amount: number
+          first_due_date: string
+          guarantee_amount: number
+          guarantee_percentage: number
+          id?: string
+          installment_amount: number
+          installment_count: number
+          periodic_interest_rate: number
+          processing_time?: string | null
+          product_id: string
+          quote_version?: string
+          repayment_frequency: Database["public"]["Enums"]["repayment_frequency"]
+          schedule?: Json
+          terms_version?: string
+          total_interest: number
+          total_repayable: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_ip?: string | null
+          accepted_user_agent?: string | null
+          amount?: number
+          annual_interest_rate?: number
+          application_id?: string | null
+          country_id?: string
+          created_at?: string
+          currency_code?: string
+          duration_months?: number
+          expires_at?: string
+          final_due_date?: string
+          final_installment_amount?: number
+          first_due_date?: string
+          guarantee_amount?: number
+          guarantee_percentage?: number
+          id?: string
+          installment_amount?: number
+          installment_count?: number
+          periodic_interest_rate?: number
+          processing_time?: string | null
+          product_id?: string
+          quote_version?: string
+          repayment_frequency?: Database["public"]["Enums"]["repayment_frequency"]
+          schedule?: Json
+          terms_version?: string
+          total_interest?: number
+          total_repayable?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_quotes_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "loan_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_quotes_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_quotes_currency_code_fkey"
+            columns: ["currency_code"]
+            isOneToOne: false
+            referencedRelation: "currencies"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "loan_quotes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "loan_products"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1454,6 +1649,7 @@ export type Database = {
       application_status:
         | "draft"
         | "submitted"
+        | "under_review"
         | "kyc_review"
         | "document_review"
         | "risk_analysis"
@@ -1470,6 +1666,7 @@ export type Database = {
         | "cancelled"
         | "defaulted"
         | "on_hold"
+        | "additional_information_required"
       contract_status:
         | "draft"
         | "pending_acceptance"
@@ -1492,6 +1689,11 @@ export type Database = {
         | "partially_claimed"
         | "claimed"
         | "cancelled"
+        | "payment_pending"
+        | "payment_processing"
+        | "eligible_for_release"
+        | "release_pending"
+        | "released"
       installment_status:
         | "upcoming"
         | "due"
@@ -1668,6 +1870,7 @@ export const Constants = {
       application_status: [
         "draft",
         "submitted",
+        "under_review",
         "kyc_review",
         "document_review",
         "risk_analysis",
@@ -1684,6 +1887,7 @@ export const Constants = {
         "cancelled",
         "defaulted",
         "on_hold",
+        "additional_information_required",
       ],
       contract_status: [
         "draft",
@@ -1709,6 +1913,11 @@ export const Constants = {
         "partially_claimed",
         "claimed",
         "cancelled",
+        "payment_pending",
+        "payment_processing",
+        "eligible_for_release",
+        "release_pending",
+        "released",
       ],
       installment_status: [
         "upcoming",
