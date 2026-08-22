@@ -28,9 +28,9 @@ export function AppShell({
   unread = 0,
 }: {
   children: ReactNode;
-  isStaff?: boolean;
-  email?: string | null;
-  unread?: number;
+  isStaff?: boolean | undefined;
+  email?: string | null | undefined;
+  unread?: number | undefined;
 }) {
   const navigate = useNavigate();
   const router = useRouter();

@@ -61,18 +61,18 @@ export type StaffRole = "admin" | "underwriter" | "compliance" | "support";
 
 /** Verifies the caller holds a staff role, using their own RLS-scoped client. */
 export async function assertStaff(
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> },
+  supabase: { rpc: (fn: never, args: never) => PromiseLike<{ data: unknown }> },
   userId: string,
 ): Promise<void> {
-  const { data } = await supabase.rpc("is_staff", { _user_id: userId });
+  const { data } = await supabase.rpc("is_staff" as never, { _user_id: userId } as never);
   if (data !== true) throw new Error("Forbidden: staff access required");
 }
 
 export async function hasRole(
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> },
+  supabase: { rpc: (fn: never, args: never) => PromiseLike<{ data: unknown }> },
   userId: string,
   role: StaffRole | "customer",
 ): Promise<boolean> {
-  const { data } = await supabase.rpc("has_role", { _user_id: userId, _role: role });
+  const { data } = await supabase.rpc("has_role" as never, { _user_id: userId, _role: role } as never);
   return data === true;
 }

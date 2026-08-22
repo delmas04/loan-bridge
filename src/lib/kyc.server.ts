@@ -24,7 +24,7 @@ export async function saveDocumentRecord(supabase: UserClient, userId: string, i
       file_name: input.file_name,
       mime_type: input.mime_type,
       file_size: input.file_size,
-      status: "pending_review",
+      status: "pending",
     })
     .select("id")
     .maybeSingle();

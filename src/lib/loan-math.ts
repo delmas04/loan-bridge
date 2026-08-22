@@ -235,16 +235,16 @@ export function computeCreditScore(
 ): CreditScoreResult {
   const breakdown: Record<string, number> = {};
 
-  breakdown.base = 400;
-  breakdown.kyc = factors.kycApproved ? 120 : 0;
+  breakdown["base"] = 400;
+  breakdown["kyc"] = factors.kycApproved ? 120 : 0;
 
   const dti =
     factors.monthlyIncome && factors.monthlyIncome > 0
       ? (factors.monthlyDebt ?? 0) / factors.monthlyIncome
       : null;
-  breakdown.debt_to_income = dti === null ? 0 : dti <= 0.2 ? 120 : dti <= 0.35 ? 70 : dti <= 0.45 ? 25 : -70;
+  breakdown["debt_to_income"] = dti === null ? 0 : dti <= 0.2 ? 120 : dti <= 0.35 ? 70 : dti <= 0.45 ? 25 : -70;
 
-  breakdown.employment = ["employed", "self_employed", "business_owner"].includes(
+  breakdown["employment"] = ["employed", "self_employed", "business_owner"].includes(
     factors.employmentStatus ?? "",
   )
     ? 70
@@ -252,12 +252,12 @@ export function computeCreditScore(
       ? 20
       : 0;
 
-  breakdown.repayment_history = Math.min(factors.completedLoans, 6) * 40;
-  breakdown.late_payments = -Math.min(factors.latePayments, 8) * 25;
-  breakdown.defaults = -factors.defaults * 180;
-  breakdown.account_age = Math.min(Math.floor(factors.accountAgeDays / 30), 12) * 5;
-  breakdown.application_velocity = factors.applicationsLast30Days > 3 ? -60 : 0;
-  breakdown.fraud_flags = -factors.fraudFlags * 150;
+  breakdown["repayment_history"] = Math.min(factors.completedLoans, 6) * 40;
+  breakdown["late_payments"] = -Math.min(factors.latePayments, 8) * 25;
+  breakdown["defaults"] = -factors.defaults * 180;
+  breakdown["account_age"] = Math.min(Math.floor(factors.accountAgeDays / 30), 12) * 5;
+  breakdown["application_velocity"] = factors.applicationsLast30Days > 3 ? -60 : 0;
+  breakdown["fraud_flags"] = -factors.fraudFlags * 150;
 
   const raw = Object.values(breakdown).reduce((sum, v) => sum + v, 0);
   const score = Math.max(0, Math.min(1000, Math.round(raw)));
