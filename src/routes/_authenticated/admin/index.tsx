@@ -1,10 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/app-shell";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import { isStaffRoles, useOverview } from "@/hooks/use-overview";
 import { getAdminOverview } from "@/lib/admin.functions";
 import { formatPercent } from "@/lib/format";
+
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
