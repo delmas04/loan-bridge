@@ -430,7 +430,7 @@ function ApplyPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border">
-                        {((quote.schedule ?? []) as ScheduleRow[]).map((row) => (
+                        {((quote.schedule ?? []) as unknown as ScheduleRow[]).map((row) => (
                           <tr key={row.installmentNumber}>
                             <td className="px-3 py-2">{row.installmentNumber}</td>
                             <td className="px-3 py-2">{formatDate(row.dueDate)}</td>

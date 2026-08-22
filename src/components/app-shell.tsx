@@ -20,6 +20,7 @@ const CUSTOMER_NAV: NavItem[] = [
   { to: "/dashboard", label: "Overview" },
   { to: "/documents", label: "Verification" },
   { to: "/profile", label: "Profile" },
+  { to: "/apply", label: "Apply for a loan" },
   { to: "/loans", label: "My Loans" },
   { to: "/repayments", label: "Repayments" },
   { to: "/guarantee", label: "Guarantee" },
@@ -30,7 +31,11 @@ const CUSTOMER_NAV: NavItem[] = [
 const STAFF_NAV: NavItem[] = [
   { to: "/admin", label: "Admin overview" },
   { to: "/admin/kyc", label: "KYC queue" },
+  { to: "/admin/applications", label: "Application queue" },
+  { to: "/admin/products", label: "Loan products" },
+  { to: "/admin/guarantees", label: "Guarantee ledger" },
 ];
+
 
 export function AppShell({
   children,
