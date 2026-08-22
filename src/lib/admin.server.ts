@@ -168,7 +168,7 @@ export async function loadDossier(supabase: UserClient, actorId: string, targetI
 export async function decideDocument(
   supabase: UserClient,
   actorId: string,
-  input: { documentId: string; decision: "approved" | "rejected" | "under_review" | "expired"; reason?: string | null },
+  input: { documentId: string; decision: "approved" | "rejected" | "under_review" | "expired"; reason?: string | null | undefined },
 ) {
   await assertStaff(supabase, actorId);
   if (input.decision === "rejected" && !input.reason?.trim()) {
@@ -218,7 +218,7 @@ export async function decideDocument(
 export async function applyKycDecision(
   supabase: UserClient,
   actorId: string,
-  input: { userId: string; decision: "approved" | "rejected"; notes?: string | null; reason?: string | null },
+  input: { userId: string; decision: "approved" | "rejected"; notes?: string | null | undefined; reason?: string | null | undefined },
 ) {
   await assertStaff(supabase, actorId);
   if (input.decision === "rejected" && !input.reason?.trim()) {
@@ -292,7 +292,7 @@ export async function applyAccountStatus(
   input: {
     userId: string;
     status: "pending_verification" | "verified" | "rejected" | "suspended" | "blocked";
-    reason?: string | null;
+    reason?: string | null | undefined;
   },
 ) {
   await assertStaff(supabase, actorId);
