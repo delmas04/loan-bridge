@@ -160,7 +160,7 @@ export async function loadBankTransferAdmin(supabase: UserClient, userId: string
     declared: count((p) => p.status === "declared"),
     underReview: count((p) => p.status === "under_review" || p.status === "processing"),
     verified: count((p) => p.status === "verified" || p.status === "successful"),
-    rejected: count((p) => p.status === "rejected" || p.status === "failed"),
+    rejected: count((p) => p.status === "failed"),
     refundsPending: (guarantees.data ?? []).filter((g) => ["eligible_for_refund", "refund_pending"].includes(g.status))
       .length,
     releasesPending: (guarantees.data ?? []).filter((g) =>
@@ -542,7 +542,7 @@ export async function reviewBankTransfer(supabase: UserClient, staffId: string, 
     await supabaseAdmin
       .from("payments")
       .update({
-        status: "rejected",
+        status: "failed",
         reviewed_at: now,
         reviewed_by: staffId,
         rejection_reason: input.reason.trim(),
