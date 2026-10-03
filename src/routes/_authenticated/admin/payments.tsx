@@ -233,7 +233,7 @@ function BankTransfersAdmin() {
             "",
             "status",
             [
-              ...["pending", "declared", "under_review", "verified", "rejected", "refunded", "failed"].map(
+              ...["pending", "declared", "under_review", "verified", "failed", "refunded"].map(
                 (s) => [s, humanise(s)] as [string, string],
               ),
               ["mismatch", "Flagged mismatches"],
